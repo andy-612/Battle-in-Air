@@ -1,2 +1,2 @@
 # Battle-in-Air
-a programed arcade game that has planes hitting other planes 
+A programed arcade game that has planes hitting other planes. It's a player Vs computer game, and there is no obstacle. However, there are limited ammunitions and also the lives that a player can have in each play. The oppnonent planes, or the computers, would come out on the opposite side of the screen and fire systematically, which the player has to avoid being hit and also destroy the opponents at the same time.
