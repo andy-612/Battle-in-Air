@@ -7,18 +7,15 @@ import random
 
 pygame.init()
 
-display_width = 800
-display_height = 600
 
 MAX_SHOTS      = 2      #most player bullets onscreen
 ALIEN_ODDS     = 22     #chances a new alien appears
 BOMB_ODDS      = 60    #chances a new bomb will drop
 ALIEN_RELOAD   = 12     #frames between new aliens
-SCREENRECT     = Rect(0, 0, 640, 480)
+SCREENRECT     = Rect(0, 0, 1280, 720)
 SCORE          = 0
 
 
-gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Battle in Air')
 clock = pygame.time.Clock()
 
@@ -55,6 +52,8 @@ class Player(pygame.sprite.Sprite):
         self.reloading = 0
         self.origtop = self.rect.top
         self.facing = -1
+        self.movey = 0
+        self.frame = 0
 
     def move(self, direction):
         if direction: self.facing = direction
@@ -65,6 +64,12 @@ class Player(pygame.sprite.Sprite):
         elif direction > 0:
             self.image = self.images[1]
         self.rect.top = self.origtop - (self.rect.left//self.bounce%2)
+
+    def movev(self, y):
+        self.movey += y
+
+    def update(self):
+        self.rect.y = self.rect.y + self.movey
 
 
 class Score(pygame.sprite.Sprite):
@@ -98,7 +103,6 @@ def game_intro():
                 pygame.quit()
                 quit()
 
-        gameDisplay.fill(black)
 
 
         mouse= pygame.mouse.get_pos()
@@ -118,8 +122,7 @@ def game_loop():
     bestdepth = pygame.display.mode_ok(SCREENRECT.size, winstyle, 32)
     screen = pygame.display.set_mode(SCREENRECT.size, winstyle, bestdepth)
 
-    x = (display_width * 0.45)
-    y = (display_height * 0.8)
+
     x_change = 0
     img = load_image('plane.png')
     Player.images = [img, pygame.transform.flip(img, 1, 0)]
@@ -135,6 +138,7 @@ def game_loop():
 
     gameExit = False
 
+
     while player.alive():
 
         for event in pygame.event.get():
@@ -147,6 +151,10 @@ def game_loop():
                     x_change = -5
                 if event.key == pygame.K_RIGHT:
                     x_change = 5
+                if event.key == pygame.K_UP:
+                    player.movev(-20)
+                if event.key == pygame.K_DOWN:
+                    player.movev(20)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -162,10 +170,14 @@ def game_loop():
         direction = keystate[K_RIGHT] - keystate[K_LEFT]
         player.move(direction)
 
-        x += x_change
-        gameDisplay.fill(black)
+        #directionv = keystate[K_UP] - keystate[K_DOWN]
+        #player.movev(directionv)
+        player.update()
 
 
+        #drav the scene
+        dirty = all.draw(screen)
+        pygame.display.update(dirty)
 
 
 
